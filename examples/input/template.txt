@@ -1,0 +1,51 @@
+<h1>Template</h1>
+This is a template file.
+
+
+<h1>Heading h1</h1>
+
+<h2>Heading h2</h2>
+
+<h3>Heading h3</h3>
+
+<h4>Heading h4</h4>
+
+Some code <code>goes here</code>.
+
+Link to <a href="loremipsum.html">Lorem Ipsum</a>
+
+<!-- This is a comment -->
+<!-- <img src="path/to/image.jpg"> -->
+<!-- <object data="path/to.svg" type="image/svg+xml"></object> -->
+
+<div class="note-blue">
+<h3 class="note-blue">Blue Note</h3>
+This is an example for a blue note.
+</div>
+
+<div class="note-green">
+<h3 class="note-green">Green Note</h3>
+This is an example for a green note.
+</div>
+
+<div class="note-orange">
+<h3 class="note-orange">Orange Note</h3>
+This is an example for an orange note.
+</div>
+
+<div class="note-red">
+<h3 class="note-red">Red Note</h3>
+This is an example for a red note.
+</div>
+
+<ul class="dir">
+    <li>Directory A</li>
+    <li>Directory B</li>
+</ul>
+<ul class="file">
+    <li>File A</li>
+    <li>File B</li>
+</ul>
+
+\[ E = m c^2 \]
+where \(c\) denotes the speed of light.

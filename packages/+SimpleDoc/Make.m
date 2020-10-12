@@ -85,6 +85,7 @@ function Make(title, inputDirectory, outputDirectory)
     % Version     Author                 Changes
     % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     % 20201010    Robert Damerius        Initial release.
+    % 20201012    Robert Damerius        fwrite() is now writing with UTF-8, rmdir() now removes non-empty directories.
     % 
     % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -115,7 +116,7 @@ function Make(title, inputDirectory, outputDirectory)
     fprintf('title:  "%s"\ninput:  "%s"\noutput: "%s"\n\n',title,inputDirectory,outputDirectory);
 
     % Delete and create output directory
-    [~,~] = rmdir(strOutput);
+    [~,~] = rmdir(strOutput,'s');
     [~,~] = mkdir(strOutput);
 
     % Unzip core data (Desgin, MathJax) to output directory
@@ -150,8 +151,8 @@ function Make(title, inputDirectory, outputDirectory)
         % Create final HTML page
         html = GenerateHTML(title, htmlVersion, htmlNavigationBar, htmlContent);
         outputFile = [outputDirectory filenameOnly '.html'];
-        fileID = fopen(outputFile,'w');
-        fwrite(fileID,uint8(html));
+        fileID = fopen(outputFile, 'w', 'native', 'UTF-8');
+        fwrite(fileID,unicode2native(html, 'UTF-8'));
         fclose(fileID);
         fprintf('OK\n');
     end

@@ -85,7 +85,8 @@ function Make(title, inputDirectory, outputDirectory)
     % Version     Author                 Changes
     % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     % 20201010    Robert Damerius        Initial release.
-    % 20201012    Robert Damerius        fwrite() is now writing with UTF-8, rmdir() now removes non-empty directories.
+    % 20201012    Robert Damerius        fwrite() is now writing with UTF-8, rmdir() now removes non-empty directories. Equations
+    %                                    are enumerated automatically.
     % 
     % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -235,8 +236,10 @@ function htmlContent = GenerateHTMLContent(inputDirectory, inputFile)
     fclose(fileID);
 
     % Replace non-printable characters by LF
+    HT = char(uint8(9));
     LF = char(uint8(10));
     for i = 1:length(txtContent)
+        if(uint8(HT) == uint8(txtContent(i))), continue; end
         %if(uint8(LF) == uint8(txtContent(i))), continue; end
         if(uint8(txtContent(i)) >= uint8(32)), continue; end
         txtContent(i) = LF;
@@ -254,6 +257,7 @@ function html = GenerateHTML(title, htmlVersion, htmlNavigation, htmlContent)
         '<meta name="viewport" content="width=device-width, initial-scale=1"/>' LF ...
         '<title>' title '</title>' LF ...
         '<link rel="stylesheet" href="core/design.css">' LF ...
+        '<script>MathJax = { tex: {tags: ''ams''}};</script>' LF ...
         '<script id="MathJax-script" async src="core/mathjax/tex-chtml.js"></script>' LF ...
         '</head>' LF ...
         '<body>' LF ...

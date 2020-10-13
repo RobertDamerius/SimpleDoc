@@ -23,6 +23,7 @@ The directory structure of this repository is as follows.
 | Date        | Version  | Description                           |
 | :---------- | :------- | :------------------------------------ |
 | 2020-10-10  | 1.0      | Initial release                       |
+| 2020-10-13  | 1.1      | Added custom navigation layout        |
 
 
 ## How To Install
@@ -38,6 +39,7 @@ The navigation bar is created automatically.
 Each page is included in the navigation bar.
 The file name is used to sort the entries of the navigation bar.
 The displayed text corresponds to the first main title (`<h1></h1>`) that appears on a page, or the file name if there is no main title.
+Alternatively, the layout for the navigation bar can be specified.
 
 
 ### MathJax

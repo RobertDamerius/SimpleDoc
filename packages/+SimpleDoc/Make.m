@@ -1,4 +1,4 @@
-function Make(title, inputDirectory, outputDirectory)
+function Make(title, inputDirectory, outputDirectory, layoutNavBar)
     %SimpleDoc.Make Generate an HTML documentation from input text files. The plain text is embedded directly into the HTML page. HTML commands
     % can be written into the input text file. SimpleDoc.Make generates some HTML around the input text and also generates a navigation bar.
     % 
@@ -8,6 +8,7 @@ function Make(title, inputDirectory, outputDirectory)
     % title            ... Title of the documentation.
     % inputDirectory   ... Input directory containing the text files to be converted.
     % outputDirectory  ... Output directory in which the html files should be written.
+    % layoutNavBar     ... A list of SimpleDoc.NavEntry objects that represent a custom navigation bar layout.
     % 
     % 
     % NAVIGATION BAR
@@ -15,6 +16,7 @@ function Make(title, inputDirectory, outputDirectory)
     % The navigation bar is created automatically. Each page is included in the navigation bar. The file name is used to sort the
     % entries of the navigation bar. The displayed text corresponds to the first main title (<h1></h1>) that appears on a page, or
     % the file name if there is no main title.
+    % If the customNavBar parameter is specified, the navigation bar is created based on this list.
     % 
     % 
     % HOW TO USE
@@ -87,6 +89,7 @@ function Make(title, inputDirectory, outputDirectory)
     % 20201010    Robert Damerius        Initial release.
     % 20201012    Robert Damerius        fwrite() is now writing with UTF-8, rmdir() now removes non-empty directories. Equations
     %                                    are enumerated automatically.
+    % 20201013    Robert Damerius        Added custom navigation bar.
     % 
     % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -99,12 +102,18 @@ function Make(title, inputDirectory, outputDirectory)
     strTitle = '';
     strInput = '';
     strOutput = 'html';
+    navBar = SimpleDoc.NavEntry.empty();
     if(nargin > 0), strTitle = title; end
     if(nargin > 1), strInput = inputDirectory; end
     if(nargin > 2), strOutput = outputDirectory; end
+    if(nargin > 3), navBar = layoutNavBar; end
     assert((ischar(strTitle)) && (size(strTitle,1) < 2), 'Input "title" must be a character vector!');
     assert((ischar(strInput)) && (size(strInput,1) < 2), 'Input "input" must be a character vector!');
     assert((ischar(strOutput)) && (size(strOutput,1) < 2), 'Input "output" must be a character vector!');
+    assert(isa(navBar,'SimpleDoc.NavEntry'), 'Input "layoutNavBar" must be a vector of SimpleDoc.NavEntry elements!');
+    if(~isempty(navBar))
+        assert((1 == size(navBar,1)) || (1 == size(navBar,2)), 'Input "layoutNavBar" must be vector of dimension N-by-1 or 1-by-N!');
+    end
     if(isempty(strInput)), strInput = '.'; end
     if(isempty(strOutput)), strOutput = '.'; end
     if(strInput(end) ~= filesep), strInput = [strInput filesep]; end
@@ -112,6 +121,7 @@ function Make(title, inputDirectory, outputDirectory)
     title = strTitle;
     inputDirectory = strInput;
     outputDirectory = strOutput;
+    layoutNavBar = navBar;
     fprintf('\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n');
     fprintf('%s\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n',filename);
     fprintf('title:  "%s"\ninput:  "%s"\noutput: "%s"\n\n',title,inputDirectory,outputDirectory);
@@ -144,7 +154,7 @@ function Make(title, inputDirectory, outputDirectory)
         fprintf('Generating "%s": ',filenameOnly);
 
         % Generate navigation bar
-        htmlNavigationBar = GenerateHTMLNavigation(navBarEntryNames, inputFiles, i);
+        htmlNavigationBar = GenerateHTMLNavigation(layoutNavBar, navBarEntryNames, inputFiles, i);
 
         % Generate content from input text file
         htmlContent = GenerateHTMLContent(inputDirectory, inputFiles{i});
@@ -194,27 +204,51 @@ function htmlVersion = GenerateVersionString()
     htmlVersion = sprintf('Version %04d%02d%02d',localTime.Year,localTime.Month,localTime.Day);
 end
 
-function htmlNavigationBar = GenerateHTMLNavigation(navBarEntryNames, inputFiles, idxCurrent)
+function htmlNavigationBar = GenerateHTMLNavigation(layoutNavBar, navBarEntryNames, inputFiles, idxCurrent)
     % Begin navigation bar
     LF = char(uint8(10));
     htmlNavigationBar = ['<ul class="ulnav">' LF];
 
-    % Sort file names
-    inputFiles = sort(inputFiles);
+    % If custom navigation bar layout is empty create navigation based on sorted file names
+    if(isempty(layoutNavBar))
+        % Sort file names
+        inputFiles = sort(inputFiles);
 
-    % Generate entries
-    for i = 1:length(inputFiles)
-        % Relative link address
-        destination = [inputFiles{i}(1:end-3) 'html'];
+        % Generate entries
+        for i = 1:length(inputFiles)
+            % Relative link address
+            destination = [inputFiles{i}(1:end-3) 'html'];
 
-        % Name of navigation bar entry
-        name = navBarEntryNames{i};
+            % Name of navigation bar entry
+            name = navBarEntryNames{i};
 
-        % Generate HTML string
-        if(strcmp(inputFiles{idxCurrent},inputFiles{i}))
-            htmlNavigationBar = [htmlNavigationBar '<li class="linav_active"><a href="' destination '">' name '</a></li>' LF];
-        else
-            htmlNavigationBar = [htmlNavigationBar '<li class="linav"><a href="' destination '">' name '</a></li>' LF];
+            % Generate HTML string
+            if(strcmp(inputFiles{idxCurrent},inputFiles{i}))
+                htmlNavigationBar = [htmlNavigationBar '<li class="linav_active"><a href="' destination '">' name '</a></li>' LF];
+            else
+                htmlNavigationBar = [htmlNavigationBar '<li class="linav"><a href="' destination '">' name '</a></li>' LF];
+            end
+        end
+    else
+        % HTML filename of this file
+        thisName = [inputFiles{idxCurrent}(1:end-3) 'html'];
+
+        % Generate entries based on layout
+        for i = 1:length(layoutNavBar)
+            switch(layoutNavBar(i).type)
+                case SimpleDoc.NavEntryType.none
+                    htmlNavigationBar = [htmlNavigationBar '<li class="linone"></li>' LF];
+                case SimpleDoc.NavEntryType.line
+                    htmlNavigationBar = [htmlNavigationBar '<li class="liline"></li>' LF];
+                case SimpleDoc.NavEntryType.text
+                    htmlNavigationBar = [htmlNavigationBar '<li class="litext">' layoutNavBar(i).name '</li>' LF];
+                case SimpleDoc.NavEntryType.link
+                    if(strcmp(thisName, layoutNavBar(i).link))
+                        htmlNavigationBar = [htmlNavigationBar '<li class="linav_active"><a href="' layoutNavBar(i).link '">' layoutNavBar(i).name '</a></li>' LF];
+                    else
+                        htmlNavigationBar = [htmlNavigationBar '<li class="linav"><a href="' layoutNavBar(i).link '">' layoutNavBar(i).name '</a></li>' LF];
+                    end
+            end
         end
     end
 

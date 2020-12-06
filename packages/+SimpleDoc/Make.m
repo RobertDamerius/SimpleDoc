@@ -1,4 +1,4 @@
-function Make(title, inputDirectory, outputDirectory, layoutNavBar)
+function Make(title, inputDirectory, outputDirectory, layoutNavBar, useMathJax)
     %SimpleDoc.Make Generate an HTML documentation from input text files. The plain text is embedded directly into the HTML page. HTML commands
     % can be written into the input text file. SimpleDoc.Make generates some HTML around the input text and also generates a navigation bar.
     % 
@@ -9,6 +9,7 @@ function Make(title, inputDirectory, outputDirectory, layoutNavBar)
     % inputDirectory   ... Input directory containing the text files to be converted.
     % outputDirectory  ... Output directory in which the html files should be written.
     % layoutNavBar     ... A list of SimpleDoc.NavEntry objects that represent a custom navigation bar layout.
+    % useMathJax       ... True if mathjax should be used, false otherwise. By default, mathjax is used.
     % 
     % 
     % NAVIGATION BAR
@@ -90,6 +91,7 @@ function Make(title, inputDirectory, outputDirectory, layoutNavBar)
     % 20201012    Robert Damerius        fwrite() is now writing with UTF-8, rmdir() now removes non-empty directories. Equations
     %                                    are enumerated automatically.
     % 20201013    Robert Damerius        Added custom navigation bar.
+    % 20201206    Robert Damerius        Added optional value to include/exlude mathjax.
     % 
     % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -103,14 +105,17 @@ function Make(title, inputDirectory, outputDirectory, layoutNavBar)
     strInput = '';
     strOutput = 'html';
     navBar = SimpleDoc.NavEntry.empty();
+    enableMathJax = true;
     if(nargin > 0), strTitle = title; end
     if(nargin > 1), strInput = inputDirectory; end
     if(nargin > 2), strOutput = outputDirectory; end
     if(nargin > 3), navBar = layoutNavBar; end
+    if(nargin > 4), enableMathJax = useMathJax; end
     assert((ischar(strTitle)) && (size(strTitle,1) < 2), 'Input "title" must be a character vector!');
     assert((ischar(strInput)) && (size(strInput,1) < 2), 'Input "input" must be a character vector!');
     assert((ischar(strOutput)) && (size(strOutput,1) < 2), 'Input "output" must be a character vector!');
     assert(isa(navBar,'SimpleDoc.NavEntry'), 'Input "layoutNavBar" must be a vector of SimpleDoc.NavEntry elements!');
+    assert(isscalar(enableMathJax) && islogical(enableMathJax), 'Input "useMathJax" must be a logical scalar!');
     if(~isempty(navBar))
         assert((1 == size(navBar,1)) || (1 == size(navBar,2)), 'Input "layoutNavBar" must be vector of dimension N-by-1 or 1-by-N!');
     end
@@ -132,6 +137,9 @@ function Make(title, inputDirectory, outputDirectory, layoutNavBar)
 
     % Unzip core data (Desgin, MathJax) to output directory
     unzip([thisDirectory 'core.zip'], [outputDirectory 'core' filesep]);
+    if(~enableMathJax)
+        rmdir([outputDirectory 'core' filesep 'mathjax'],'s');
+    end
 
     % Scan input directory
     listing = dir([inputDirectory '*.txt']);
@@ -160,7 +168,7 @@ function Make(title, inputDirectory, outputDirectory, layoutNavBar)
         htmlContent = GenerateHTMLContent(inputDirectory, inputFiles{i});
 
         % Create final HTML page
-        html = GenerateHTML(title, htmlVersion, htmlNavigationBar, htmlContent);
+        html = GenerateHTML(title, htmlVersion, htmlNavigationBar, htmlContent, enableMathJax);
         outputFile = [outputDirectory filenameOnly '.html'];
         fileID = fopen(outputFile, 'w', 'native', 'UTF-8');
         fwrite(fileID,unicode2native(html, 'UTF-8'));
@@ -281,8 +289,15 @@ function htmlContent = GenerateHTMLContent(inputDirectory, inputFile)
     htmlContent = txtContent;
 end
 
-function html = GenerateHTML(title, htmlVersion, htmlNavigation, htmlContent)
+function html = GenerateHTML(title, htmlVersion, htmlNavigation, htmlContent, includeMathJax)
     LF = char(uint8(10));
+    headerMathJax = '';
+    if(includeMathJax)
+        headerMathJax = [ ...
+            '<script>MathJax = { tex: {tags: ''ams''}};</script>' LF ...
+            '<script id="MathJax-script" async src="core/mathjax/tex-chtml.js"></script>' ...
+        ];
+    end
     html = [ ...
         '<!DOCTYPE html>' LF ...
         '<html>' LF ...
@@ -291,8 +306,7 @@ function html = GenerateHTML(title, htmlVersion, htmlNavigation, htmlContent)
         '<meta name="viewport" content="width=device-width, initial-scale=1"/>' LF ...
         '<title>' title '</title>' LF ...
         '<link rel="stylesheet" href="core/design.css">' LF ...
-        '<script>MathJax = { tex: {tags: ''ams''}};</script>' LF ...
-        '<script id="MathJax-script" async src="core/mathjax/tex-chtml.js"></script>' LF ...
+        headerMathJax LF ...
         '</head>' LF ...
         '<body>' LF ...
         '<header>' LF ...
@@ -311,6 +325,6 @@ function html = GenerateHTML(title, htmlVersion, htmlNavigation, htmlContent)
         '<script src="core/script.js"></script>' LF ...
         '</body>' LF ...
         '</html>' LF ...
-        ];
+    ];
 end
 

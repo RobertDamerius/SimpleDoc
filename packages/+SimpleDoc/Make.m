@@ -1,15 +1,16 @@
-function Make(title, inputDirectory, outputDirectory, layoutNavBar, useMathJax)
+function Make(title, inputDirectory, outputDirectory, layoutNavBar, useMathJax, customVersionString)
     %SimpleDoc.Make Generate an HTML documentation from input text files. The plain text is embedded directly into the HTML page. HTML commands
     % can be written into the input text file. SimpleDoc.Make generates some HTML around the input text and also generates a navigation bar.
     % 
     % 
     % PARAMETER
     % =========
-    % title            ... Title of the documentation.
-    % inputDirectory   ... Input directory containing the text files to be converted.
-    % outputDirectory  ... Output directory in which the html files should be written.
-    % layoutNavBar     ... A list of SimpleDoc.NavEntry objects that represent a custom navigation bar layout.
-    % useMathJax       ... True if mathjax should be used, false otherwise. By default, mathjax is used.
+    % title               ... Title of the documentation.
+    % inputDirectory      ... Input directory containing the text files to be converted.
+    % outputDirectory     ... Output directory in which the html files should be written.
+    % layoutNavBar        ... A list of SimpleDoc.NavEntry objects that represent a custom navigation bar layout.
+    % useMathJax          ... True if mathjax should be used, false otherwise. By default, mathjax is used.
+    % customVersionString ... A custom version string that is displayed in the header of the HTML page. If this string is empty, the current date is used.
     % 
     % 
     % NAVIGATION BAR
@@ -106,16 +107,19 @@ function Make(title, inputDirectory, outputDirectory, layoutNavBar, useMathJax)
     strOutput = 'html';
     navBar = SimpleDoc.NavEntry.empty();
     enableMathJax = true;
+    customHTMLVersion = '';
     if(nargin > 0), strTitle = title; end
     if(nargin > 1), strInput = inputDirectory; end
     if(nargin > 2), strOutput = outputDirectory; end
     if(nargin > 3), navBar = layoutNavBar; end
     if(nargin > 4), enableMathJax = useMathJax; end
+    if(nargin > 5), customHTMLVersion = customVersionString; end
     assert((ischar(strTitle)) && (size(strTitle,1) < 2), 'Input "title" must be a character vector!');
     assert((ischar(strInput)) && (size(strInput,1) < 2), 'Input "input" must be a character vector!');
     assert((ischar(strOutput)) && (size(strOutput,1) < 2), 'Input "output" must be a character vector!');
     assert(isa(navBar,'SimpleDoc.NavEntry'), 'Input "layoutNavBar" must be a vector of SimpleDoc.NavEntry elements!');
     assert(isscalar(enableMathJax) && islogical(enableMathJax), 'Input "useMathJax" must be a logical scalar!');
+    assert(ischar(customHTMLVersion), 'Input "customVersionString" must be a character vector!');
     if(~isempty(navBar))
         assert((1 == size(navBar,1)) || (1 == size(navBar,2)), 'Input "layoutNavBar" must be vector of dimension N-by-1 or 1-by-N!');
     end
@@ -156,6 +160,9 @@ function Make(title, inputDirectory, outputDirectory, layoutNavBar, useMathJax)
 
     % Process all files
     htmlVersion = GenerateVersionString();
+    if(~isempty(customHTMLVersion))
+        htmlVersion = customHTMLVersion;
+    end
     for i = 1:length(inputFiles)
         % Get input filename without path and extension
         filenameOnly = inputFiles{i}(1:end-4);

@@ -1,12 +1,12 @@
 classdef NavEntry
     %SimpleDoc.NavEntry An entry for the navigation bar. This class can be used to create a custom navigation bar when the
     % documentation is created with SimpleDoc.Make.
-    % 
+    %
     % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     % Version     Author                 Changes
     % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     % 20201013    Robert Damerius        Initial release.
-    % 
+    %
     % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     properties
         type;    % The type of the navigation entry of datatype SimpleDoc.NavEntryType.
@@ -16,7 +16,7 @@ classdef NavEntry
     methods
         function this = NavEntry(type, name, link)
             %SimpleDoc.NavEntry.NavEntry Create a navigation entry.
-            % 
+            %
             % PARAMETERS
             % type  ... The type of the navigation entry of datatype SimpleDoc.NavEntryType. Default value is SimpleDoc.NavEntryType.none.
             % name  ... A character vector representing the name of the navigation entry. Default value is ''.
@@ -38,4 +38,3 @@ classdef NavEntry
         end
     end
 end
-

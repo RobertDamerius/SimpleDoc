@@ -5,7 +5,7 @@ classdef NavEntryType < uint8
     % Version     Author                 Changes
     % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     % 20201013    Robert Damerius        Initial release.
-    % 
+    %
     % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     enumeration
         none (0)  % Empty navigation bar entry.
@@ -14,4 +14,3 @@ classdef NavEntryType < uint8
         link (3)  % Text with a link.
     end
 end
-

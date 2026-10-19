@@ -1,8 +1,8 @@
 function Make(title, inputDirectory, outputDirectory, layoutNavBar, useMathJax, customVersionString)
     %SimpleDoc.Make Generate an HTML documentation from input text files. The plain text is embedded directly into the HTML page. HTML commands
     % can be written into the input text file. SimpleDoc.Make generates some HTML around the input text and also generates a navigation bar.
-    % 
-    % 
+    %
+    %
     % PARAMETER
     % =========
     % title               ... Title of the documentation.
@@ -11,67 +11,67 @@ function Make(title, inputDirectory, outputDirectory, layoutNavBar, useMathJax, 
     % layoutNavBar        ... A list of SimpleDoc.NavEntry objects that represent a custom navigation bar layout.
     % useMathJax          ... True if mathjax should be used, false otherwise. By default, mathjax is used.
     % customVersionString ... A custom version string that is displayed in the header of the HTML page. If this string is empty, the current date is used.
-    % 
-    % 
+    %
+    %
     % NAVIGATION BAR
     % ==============
     % The navigation bar is created automatically. Each page is included in the navigation bar. The file name is used to sort the
     % entries of the navigation bar. The displayed text corresponds to the first main title (<h1></h1>) that appears on a page, or
     % the file name if there is no main title.
     % If the customNavBar parameter is specified, the navigation bar is created based on this list.
-    % 
-    % 
+    %
+    %
     % HOW TO USE
     % ==========
     % Add all text files to the input folder and run SimpleDoc.Make.
-    % 
-    % 
+    %
+    %
     % NOTES
     % =====
     % Only txt files are processed. All text files in the input directory are converted to html files in the output directory. The
     % output directory is deleted and created anew each time. Relative links always refer to the output directory.
-    % 
-    % 
+    %
+    %
     % USEFUL COMMANDS
     % ===============
     % Heading (layer 1)             ...   <h1>Heading</h1>
-    % 
+    %
     % Heading (layer 2)             ...   <h2>Heading</h2>
-    % 
+    %
     % Heading (layer 3)             ...   <h3>Heading</h3>
-    % 
+    %
     % Heading (layer 4)             ...   <h4>Heading</h4>
-    % 
+    %
     % Line break                    ...   <br>
-    % 
+    %
     % Code section                  ...   <code>Text with code style</code>
-    % 
+    %
     % Link to another page          ...   <a href="another_page.html">click me</a>
-    % 
+    %
     % Image (relative to output)    ...   <img src="path/to/image.jpg">
-    % 
+    %
     % SVG (relative to output)      ...   <object data="path/to.svg" type="image/svg+xml"></object>
-    % 
+    %
     % Note section (blue)           ...   <div class="note-blue">
     %                                     <h3 class="note-blue">Blue Note</h3>
     %                                     This is an example for a blue note.
     %                                     </div>
-    % 
+    %
     % Note section (green)          ...   <div class="note-green">
     %                                     <h3 class="note-green">Green Note</h3>
     %                                     This is an example for a green note.
     %                                     </div>
-    % 
+    %
     % Note section (orange)         ...   <div class="note-orange">
     %                                     <h3 class="note-orange">Orange Note</h3>
     %                                     This is an example for an orange note.
     %                                     </div>
-    % 
+    %
     % Note section (red)            ...   <div class="note-red">
     %                                     <h3 class="note-red">Red Note</h3>
     %                                     This is an example for a red note.
     %                                     </div>
-    % 
+    %
     % Directory/File list           ...   <ul class="dir">
     %                                         <li>Directory A</li>
     %                                         <li>Directory B</li>
@@ -80,11 +80,11 @@ function Make(title, inputDirectory, outputDirectory, layoutNavBar, useMathJax, 
     %                                         <li>File A</li>
     %                                         <li>File B</li>
     %                                     </ul>
-    % 
+    %
     % Equation                      ...   \[ E = m c^2 \]
     %                                     \( E = m c^2 \)
-    % 
-    % 
+    %
+    %
     % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     % Version     Author                 Changes
     % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -93,7 +93,7 @@ function Make(title, inputDirectory, outputDirectory, layoutNavBar, useMathJax, 
     %                                    are enumerated automatically.
     % 20201013    Robert Damerius        Added custom navigation bar.
     % 20201206    Robert Damerius        Added optional value to include/exlude mathjax.
-    % 
+    %
     % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     % Get absolute path to data directory
@@ -334,4 +334,3 @@ function html = GenerateHTML(title, htmlVersion, htmlNavigation, htmlContent, in
         '</html>' LF ...
     ];
 end
-
